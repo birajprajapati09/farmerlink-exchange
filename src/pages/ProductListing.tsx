@@ -1,20 +1,17 @@
-
 import { useState } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ProductCard from "@/components/ProductCard";
-import { Slider } from "@/components/ui/slider";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import ProductCard from "@/components/ProductCard";
 import { Product } from "@/types";
-import { 
-  ChevronDown, 
-  SliderIcon, 
-  Search, 
-  X, 
-  Filter 
+import {
+  Search,
+  SlidersIcon,
+  Grid3x3,
+  List,
 } from "lucide-react";
 
 // Import mock products from FeaturedProducts
