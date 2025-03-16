@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { User, Lock, Mail, MapPin, Home } from "lucide-react";
 
 // Define schemas for form validation
 const loginSchema = z.object({
@@ -109,41 +110,44 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-sage-50 to-stone-100">
       <Navbar />
       
-      <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-stone-50">
+      <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-stone-900">Welcome to FarmerLink</h2>
-            <p className="mt-2 text-stone-600">Sign in or create an account to continue</p>
+            <h2 className="text-3xl font-bold text-amber-700">Welcome to FarmerLink</h2>
+            <p className="mt-2 text-sage-600">Connect with local farmers and fresh produce</p>
           </div>
 
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid grid-cols-2 w-full mb-6">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
+            <TabsList className="grid grid-cols-2 w-full mb-6 bg-sage-100">
+              <TabsTrigger value="login" className="data-[state=active]:bg-amber-100 data-[state=active]:text-amber-700">Login</TabsTrigger>
+              <TabsTrigger value="register" className="data-[state=active]:bg-amber-100 data-[state=active]:text-amber-700">Register</TabsTrigger>
             </TabsList>
             
             <TabsContent value="login">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Login to your account</CardTitle>
-                  <CardDescription>
-                    Enter your email and password to login
+              <Card className="border-sage-200 bg-white/80 backdrop-blur-sm shadow-md">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-2xl text-amber-600">Login to your account</CardTitle>
+                  <CardDescription className="text-sage-600">
+                    Enter your email and password to access your account
                   </CardDescription>
                 </CardHeader>
                 <Form {...loginForm}>
                   <form onSubmit={loginForm.handleSubmit(onLoginSubmit)}>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-5 pt-4">
                       <FormField
                         control={loginForm.control}
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel className="text-sage-700">Email</FormLabel>
                             <FormControl>
-                              <Input placeholder="your@email.com" {...field} />
+                              <div className="relative">
+                                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-sage-500" />
+                                <Input placeholder="your@email.com" className="pl-10" {...field} />
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -151,8 +155,8 @@ const Auth = () => {
                       />
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <FormLabel>Password</FormLabel>
-                          <Link to="/forgot-password" className="text-sm text-green-600 hover:text-green-700">
+                          <FormLabel className="text-sage-700">Password</FormLabel>
+                          <Link to="/forgot-password" className="text-sm text-amber-600 hover:text-amber-700">
                             Forgot password?
                           </Link>
                         </div>
@@ -162,7 +166,10 @@ const Auth = () => {
                           render={({ field }) => (
                             <FormItem>
                               <FormControl>
-                                <Input type="password" {...field} />
+                                <div className="relative">
+                                  <Lock className="absolute left-3 top-2.5 h-5 w-5 text-sage-500" />
+                                  <Input type="password" className="pl-10" {...field} />
+                                </div>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -170,10 +177,10 @@ const Auth = () => {
                         />
                       </div>
                     </CardContent>
-                    <CardFooter>
+                    <CardFooter className="pt-2">
                       <Button 
                         type="submit" 
-                        className="w-full bg-green-600 hover:bg-green-700"
+                        className="w-full bg-amber-600 hover:bg-amber-700"
                         disabled={isLoading}
                       >
                         {isLoading ? "Logging in..." : "Login"}
@@ -185,22 +192,22 @@ const Auth = () => {
             </TabsContent>
             
             <TabsContent value="register">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Create an account</CardTitle>
-                  <CardDescription>
-                    Enter your details to create an account
+              <Card className="border-sage-200 bg-white/80 backdrop-blur-sm shadow-md">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-2xl text-amber-600">Create an account</CardTitle>
+                  <CardDescription className="text-sage-600">
+                    Join FarmerLink to connect with local producers
                   </CardDescription>
                 </CardHeader>
                 <Form {...registerForm}>
                   <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)}>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-4 pt-4">
                       <FormField
                         control={registerForm.control}
                         name="role"
                         render={({ field }) => (
                           <FormItem className="space-y-2">
-                            <FormLabel>I am a</FormLabel>
+                            <FormLabel className="text-sage-700">I am a</FormLabel>
                             <FormControl>
                               <RadioGroup 
                                 value={field.value} 
@@ -210,13 +217,13 @@ const Auth = () => {
                                 }}
                                 className="flex space-x-4"
                               >
-                                <div className="flex items-center space-x-2">
-                                  <RadioGroupItem value="consumer" id="consumer" />
-                                  <Label htmlFor="consumer">Consumer</Label>
+                                <div className="flex items-center space-x-2 px-4 py-2 rounded-md bg-sage-50 border border-sage-200">
+                                  <RadioGroupItem value="consumer" id="consumer" className="text-amber-600" />
+                                  <Label htmlFor="consumer" className="cursor-pointer">Consumer</Label>
                                 </div>
-                                <div className="flex items-center space-x-2">
-                                  <RadioGroupItem value="farmer" id="farmer" />
-                                  <Label htmlFor="farmer">Farmer</Label>
+                                <div className="flex items-center space-x-2 px-4 py-2 rounded-md bg-sage-50 border border-sage-200">
+                                  <RadioGroupItem value="farmer" id="farmer" className="text-amber-600" />
+                                  <Label htmlFor="farmer" className="cursor-pointer">Farmer</Label>
                                 </div>
                               </RadioGroup>
                             </FormControl>
@@ -230,9 +237,12 @@ const Auth = () => {
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Full Name</FormLabel>
+                            <FormLabel className="text-sage-700">Full Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Your full name" {...field} />
+                              <div className="relative">
+                                <User className="absolute left-3 top-2.5 h-5 w-5 text-sage-500" />
+                                <Input placeholder="Your full name" className="pl-10" {...field} />
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -244,9 +254,12 @@ const Auth = () => {
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel className="text-sage-700">Email</FormLabel>
                             <FormControl>
-                              <Input type="email" placeholder="your@email.com" {...field} />
+                              <div className="relative">
+                                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-sage-500" />
+                                <Input type="email" placeholder="your@email.com" className="pl-10" {...field} />
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -258,9 +271,12 @@ const Auth = () => {
                         name="password"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel className="text-sage-700">Password</FormLabel>
                             <FormControl>
-                              <Input type="password" {...field} />
+                              <div className="relative">
+                                <Lock className="absolute left-3 top-2.5 h-5 w-5 text-sage-500" />
+                                <Input type="password" className="pl-10" {...field} />
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -273,9 +289,12 @@ const Auth = () => {
                           name="farmName"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Farm Name</FormLabel>
+                              <FormLabel className="text-sage-700">Farm Name</FormLabel>
                               <FormControl>
-                                <Input placeholder="Your farm name" {...field} />
+                                <div className="relative">
+                                  <Home className="absolute left-3 top-2.5 h-5 w-5 text-sage-500" />
+                                  <Input placeholder="Your farm name" className="pl-10" {...field} />
+                                </div>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -288,19 +307,22 @@ const Auth = () => {
                         name="location"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Location</FormLabel>
+                            <FormLabel className="text-sage-700">Location</FormLabel>
                             <FormControl>
-                              <Input placeholder="Your city" {...field} />
+                              <div className="relative">
+                                <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-sage-500" />
+                                <Input placeholder="Your city" className="pl-10" {...field} />
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                     </CardContent>
-                    <CardFooter>
+                    <CardFooter className="pt-2">
                       <Button 
                         type="submit" 
-                        className="w-full bg-green-600 hover:bg-green-700"
+                        className="w-full bg-amber-600 hover:bg-amber-700"
                         disabled={isLoading}
                       >
                         {isLoading ? "Creating Account..." : "Create Account"}
