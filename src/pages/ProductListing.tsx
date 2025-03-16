@@ -5,13 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Slider } from "@/components/ui/slider";
 import ProductCard from "@/components/ProductCard";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { Product } from "@/types";
 import {
   Search,
   SlidersIcon,
   Grid3x3,
   List,
+  Filter,
+  ChevronDown,
+  X
 } from "lucide-react";
 
 // Import mock products from FeaturedProducts
