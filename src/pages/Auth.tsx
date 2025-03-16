@@ -7,11 +7,106 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+// Define schemas for form validation
+const loginSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+});
+
+const registerSchema = z.object({
+  role: z.enum(["farmer", "consumer"], {
+    required_error: "Please select a role",
+  }),
+  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  farmName: z.string().optional(),
+  location: z.string().min(2, { message: "Location is required" }),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+type RegisterFormValues = z.infer<typeof registerSchema>;
+
 const Auth = () => {
   const [userRole, setUserRole] = useState<"farmer" | "consumer">("consumer");
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  // Login form
+  const loginForm = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    }
+  });
+
+  // Register form
+  const registerForm = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      role: "consumer",
+      name: "",
+      email: "",
+      password: "",
+      farmName: "",
+      location: "",
+    }
+  });
+
+  // Handle login submission
+  const onLoginSubmit = async (data: LoginFormValues) => {
+    setIsLoading(true);
+    try {
+      console.log("Login data:", data);
+      // Here you would typically connect to an authentication service
+      
+      toast({
+        title: "Login Successful",
+        description: "Welcome back to FarmerLink!",
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+      toast({
+        variant: "destructive",
+        title: "Login Failed",
+        description: "Please check your credentials and try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle register submission
+  const onRegisterSubmit = async (data: RegisterFormValues) => {
+    setIsLoading(true);
+    try {
+      console.log("Register data:", data);
+      // Here you would typically connect to an authentication service
+      
+      toast({
+        title: "Account Created",
+        description: "Welcome to FarmerLink! Your account has been created successfully.",
+      });
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast({
+        variant: "destructive",
+        title: "Registration Failed",
+        description: "There was an error creating your account. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -38,24 +133,54 @@ const Auth = () => {
                     Enter your email and password to login
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" placeholder="your@email.com" />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="password">Password</Label>
-                      <Link to="/forgot-password" className="text-sm text-green-600 hover:text-green-700">
-                        Forgot password?
-                      </Link>
-                    </div>
-                    <Input id="password" type="password" />
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full bg-green-600 hover:bg-green-700">Login</Button>
-                </CardFooter>
+                <Form {...loginForm}>
+                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)}>
+                    <CardContent className="space-y-4">
+                      <FormField
+                        control={loginForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input placeholder="your@email.com" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <FormLabel>Password</FormLabel>
+                          <Link to="/forgot-password" className="text-sm text-green-600 hover:text-green-700">
+                            Forgot password?
+                          </Link>
+                        </div>
+                        <FormField
+                          control={loginForm.control}
+                          name="password"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input type="password" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-green-600 hover:bg-green-700"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? "Logging in..." : "Login"}
+                      </Button>
+                    </CardFooter>
+                  </form>
+                </Form>
               </Card>
             </TabsContent>
             
@@ -67,50 +192,122 @@ const Auth = () => {
                     Enter your details to create an account
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>I am a</Label>
-                    <RadioGroup 
-                      defaultValue="consumer" 
-                      className="flex space-x-4"
-                      onValueChange={(value) => setUserRole(value as "farmer" | "consumer")}
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="consumer" id="consumer" />
-                        <Label htmlFor="consumer">Consumer</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="farmer" id="farmer" />
-                        <Label htmlFor="farmer">Farmer</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" placeholder="Your full name" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email-register">Email</Label>
-                    <Input id="email-register" type="email" placeholder="your@email.com" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password-register">Password</Label>
-                    <Input id="password-register" type="password" />
-                  </div>
-                  {userRole === "farmer" && (
-                    <div className="space-y-2">
-                      <Label htmlFor="farm-name">Farm Name</Label>
-                      <Input id="farm-name" placeholder="Your farm name" />
-                    </div>
-                  )}
-                  <div className="space-y-2">
-                    <Label htmlFor="location">Location</Label>
-                    <Input id="location" placeholder="Your city" />
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full bg-green-600 hover:bg-green-700">Create Account</Button>
-                </CardFooter>
+                <Form {...registerForm}>
+                  <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)}>
+                    <CardContent className="space-y-4">
+                      <FormField
+                        control={registerForm.control}
+                        name="role"
+                        render={({ field }) => (
+                          <FormItem className="space-y-2">
+                            <FormLabel>I am a</FormLabel>
+                            <FormControl>
+                              <RadioGroup 
+                                value={field.value} 
+                                onValueChange={(value) => {
+                                  field.onChange(value);
+                                  setUserRole(value as "farmer" | "consumer");
+                                }}
+                                className="flex space-x-4"
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="consumer" id="consumer" />
+                                  <Label htmlFor="consumer">Consumer</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <RadioGroupItem value="farmer" id="farmer" />
+                                  <Label htmlFor="farmer">Farmer</Label>
+                                </div>
+                              </RadioGroup>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={registerForm.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Name</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Your full name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={registerForm.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input type="email" placeholder="your@email.com" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={registerForm.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                              <Input type="password" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      {userRole === "farmer" && (
+                        <FormField
+                          control={registerForm.control}
+                          name="farmName"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Farm Name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Your farm name" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+                      
+                      <FormField
+                        control={registerForm.control}
+                        name="location"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Location</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Your city" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </CardContent>
+                    <CardFooter>
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-green-600 hover:bg-green-700"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? "Creating Account..." : "Create Account"}
+                      </Button>
+                    </CardFooter>
+                  </form>
+                </Form>
               </Card>
             </TabsContent>
           </Tabs>
